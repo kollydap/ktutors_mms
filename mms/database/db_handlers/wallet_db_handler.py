@@ -1,23 +1,26 @@
 from uuid import UUID
 from sqlalchemy import update, insert, select, delete, insert
-from pms.database.db_models.wallet_orm import Wallet as WalletDb, Currency
-from pms.models.user_models import WalletProfile
+from mms.database.db_models.wallet_orm import Wallet as WalletDb, Currency
+from mms.models.wallet_models import WalletProfile
 import logging, uuid
 from sqlalchemy import desc
 from sqlalchemy.exc import IntegrityError, OperationalError
-
-from pms.service.service_exceptions import (
+import random
+from mms.service.service_exceptions import (
     DuplicateError,
     NotFoundError,
 )
-from pms.database.db_models.wallet_orm import database
+from mms.database.db_models.wallet_orm import database
 
 LOGGER = logging.getLogger(__file__)
 
 
 async def create_user_wallet(x_user_uid: UUID, **kwargs):
     query = WalletDb.insert().values(
-        wallet_uid=str(uuid.uuid4()), auth_user_uid=x_user_uid, balance=2000
+        wallet_uid=str(uuid.uuid4()),
+        auth_user_uid=x_user_uid,
+        balance=random.randint(1200, 1000000),
+        currency=Currency.USD,
     )
     try:
         await database.execute(query)
@@ -38,12 +41,13 @@ async def create_user_wallet(x_user_uid: UUID, **kwargs):
         return False
 
 
-# async def get_wallet_balance(x_user_uid: int, **kwargs):
-#     query = WalletDb.select.where(auth_user_uid=x_user_uid)
-#     result = await database.execute(query)
-#     if not result:
-#         raise NotFoundError("Wallet was not found")
-#     return WalletProfile()
+async def get_wallet_balance(x_user_uid: int, **kwargs):
+    query = WalletDb.select.where(auth_user_uid=x_user_uid)
+    result = await database.execute(query)
+    print(result)
+    if not result:
+        raise NotFoundError("Wallet was not found")
+    return WalletProfile()
 
 
 # async def update_user_profile(user_update: UserUpdate, x_user_uid: UUID, **kwargs):

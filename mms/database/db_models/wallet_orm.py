@@ -1,20 +1,11 @@
 import databases
-from pms.models.user_models import Currency
+from mms.models.wallet_models import Currency
 from sqlalchemy import Column, Integer, String, Enum, Float
 import sqlalchemy
-
-# from sqlalchemy.dialects.sqlite import UUID as SQLiteUUID
-from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
-import uuid
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 database = databases.Database(SQLALCHEMY_DATABASE_URL)
 
-UUIDType = (
-    String(length=36)
-    if "sqlite" in SQLALCHEMY_DATABASE_URL
-    else PostgreSQLUUID(as_uuid=True)
-)
 
 metadata = sqlalchemy.MetaData()
 
@@ -28,7 +19,15 @@ Wallet = sqlalchemy.Table(
     Column("auth_user_uid", String, unique=True, index=True, nullable=False),
     Column("currency", Enum(Currency), nullable=True, default=Currency.USD),
 )
-
+Cart = sqlalchemy.Table(
+    "cart",
+    metadata,
+    Column(
+        "cart_uid", String, rimary_key=True, unique=True, nullable=False, index=True
+    ),
+    Column("auth_user_uid", String, index=True, nullable=False),
+    Column("product_uid", String, index=True, nullable=True),
+)
 engine = sqlalchemy.create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )

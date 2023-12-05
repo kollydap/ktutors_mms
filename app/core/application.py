@@ -1,11 +1,11 @@
 from fastapi import FastAPI, BackgroundTasks
-from pms.routers.user_routes import api_router as mms_router
+from mms.routers.user_routes import api_router as mms_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from pms.database.db_models.wallet_orm import database
+from mms.database.db_models.wallet_orm import database
 import pika, asyncio, threading
-from pms.listeners.auth.auth_listener import auth_listener
-from pms.service.user_service import user_wallet_creation_listener
+from mms.listeners.mms.wallet_listener import auth_listener
+from mms.service.wallet_service import user_wallet_creation_listener
 
 def consume_messages():
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))

@@ -8,8 +8,11 @@ from datetime import datetime
 class WalletType(str, Enum):
     DOLLAR = "DOLLAR"
     NAIRA = "NAIRA"
+
+
 class Currency(str, Enum):
     USD = "USD"
+
 
 class WalletProfile(BaseModel):
     balance: int
@@ -18,5 +21,12 @@ class WalletProfile(BaseModel):
     wallet_uid: UUID
 
 
+class WalletRecharge(BaseModel):
+    amount: int
+    currency: Currency
 
 
+class AddtoCart(BaseModel):
+    course_uid: UUID
+    user_uid: UUID
+    quantity: int
